@@ -3,6 +3,7 @@
 #include <stack>
 #include <string>
 #include <unordered_map>
+#include <cstring>
 using namespace std;
 
 void remSpaces(string& str)
@@ -17,8 +18,10 @@ void remSpaces(string& str)
     }
 }
 
-string convert(const string& str)
+string convert(string str)
 {
+    remSpaces(str);
+
     string res = "";
 
     stack<char> s;
@@ -97,16 +100,53 @@ string convert(const string& str)
 
 }
 
+int eval(string str)
+{
+    string rpn = convert(str);
+
+    stack<int> s;
+
+    for(int i = 0; i < rpn.length(); i++)
+    {   
+        char token = rpn[i];
+
+        if (token >= '0' && token <= '9')
+            s.push(token - '0');
+
+        if (token == '~')
+        {
+            int n = s.top();
+            s.pop();
+            s.push(-n);
+        }
+
+        if (token == '+' || token == '-' || token == '*' || token == '/')
+        {
+            int b = s.top();
+            s.pop();
+            int a = s.top();
+            s.pop();
+
+            if (token == '+')
+                s.push(a + b);
+            else if (token == '-')
+                s.push(a - b);
+            else if (token == '*')
+                s.push(a * b);
+            else if (token == '/')
+                s.push(a / b);
+        }
+    }
+
+    return s.top();
+}
 
 int main()
 {
-    string str = "- 1 + 2";
+    string str = "- (1 + 2)";
 
-    string res = "";
+    int res = eval(str);
 
-    remSpaces(str);
-
-    res = convert(str);
 
     cout << res << endl;
 
