@@ -83,7 +83,15 @@ string convert(string str)
         
         if (token >= '0' && token <= '9')
         {
-            res += token;
+            char ch = str[i];
+            while(ch >= '0' && ch <= '9')
+            {
+                res += ch;
+                i++;
+                ch = str[i];
+            }
+            i--;
+            res += ' ';
         }
     }
 
@@ -110,8 +118,26 @@ int eval(string str)
     {   
         char token = rpn[i];
 
+        if (token == ' ')
+            continue;
+
         if (token >= '0' && token <= '9')
-            s.push(token - '0');
+        {
+            char ch = rpn[i];
+            int n = 0;
+            int prem = 1;
+
+            while(ch != ' ')
+            {
+                n += static_cast<int>(ch - '0') * prem;
+                prem *= 10;
+                i++;
+                ch = rpn[i];
+            }
+
+            s.push(n);
+            i--;
+        }
 
         if (token == '~')
         {
@@ -143,7 +169,7 @@ int eval(string str)
 
 int main()
 {
-    string str = "- (1 + 2)";
+    string str = "- (11 + 2)";
 
     int res = eval(str);
 
